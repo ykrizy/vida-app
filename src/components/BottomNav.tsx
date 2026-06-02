@@ -1,12 +1,13 @@
 import { NavLink } from 'react-router-dom'
-import { CheckSquare, Calendar, Folders, Timer, BarChart3 } from 'lucide-react'
+import { CheckSquare, Calendar, Folders, Timer, BarChart3, Heart } from 'lucide-react'
 
 const nav = [
-  { to: '/', icon: CheckSquare, label: 'Hoje' },
-  { to: '/calendario', icon: Calendar, label: 'Calendário' },
-  { to: '/projetos', icon: Folders, label: 'Projetos' },
-  { to: '/foco', icon: Timer, label: 'Foco' },
-  { to: '/semana', icon: BarChart3, label: 'Semana' },
+  { to: '/',          icon: CheckSquare, label: 'Hoje'     },
+  { to: '/habitos',   icon: Heart,       label: 'Hábitos'  },
+  { to: '/calendario',icon: Calendar,    label: 'Agenda'   },
+  { to: '/projetos',  icon: Folders,     label: 'Projetos' },
+  { to: '/foco',      icon: Timer,       label: 'Foco'     },
+  { to: '/semana',    icon: BarChart3,   label: 'Semana'   },
 ]
 
 export function BottomNav() {
@@ -28,17 +29,15 @@ export function BottomNav() {
             to={to}
             end={to === '/'}
             className={({ isActive }) =>
-              `flex-1 flex flex-col items-center gap-0.5 py-2 transition-all ${
-                isActive ? 'text-indigo-600' : 'text-gray-400'
-              }`
+              `flex-1 flex flex-col items-center gap-0.5 py-2 transition-all ${isActive ? 'text-indigo-600' : 'text-gray-400'}`
             }
           >
             {({ isActive }) => (
               <>
-                <div className={`p-1.5 rounded-xl transition-all ${isActive ? 'bg-indigo-50' : ''}`}>
-                  <Icon size={20} strokeWidth={isActive ? 2.5 : 1.8} />
+                <div className={`p-1 rounded-xl transition-all ${isActive ? 'bg-indigo-50' : ''}`}>
+                  <Icon size={18} strokeWidth={isActive ? 2.5 : 1.8} />
                 </div>
-                <span className="text-[10px] font-medium tracking-tight">{label}</span>
+                <span className="text-[9px] font-medium tracking-tight">{label}</span>
               </>
             )}
           </NavLink>

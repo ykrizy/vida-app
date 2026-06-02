@@ -54,3 +54,21 @@ input, textarea, select {
 }
 
 button { cursor: pointer; }
+
+/* ── Print / PDF export ──────────────────────────── */
+@media print {
+  body {
+    background: white !important;
+    font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif;
+  }
+  .no-print, nav, .fixed { display: none !important; }
+  #weekly-review-print {
+    padding: 24px !important;
+    background: white !important;
+    max-width: 100% !important;
+    padding-bottom: 24px !important;
+  }
+  .bg-white { box-shadow: none !important; border: 1px solid #e5e7eb !important; }
+  .pb-nav { padding-bottom: 0 !important; }
+  @page { margin: 16mm; size: A4 portrait; }
+}

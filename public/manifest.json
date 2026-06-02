@@ -9,15 +9,30 @@
   "theme_color": "#6366f1",
   "orientation": "portrait",
   "icons": [
+    { "src": "/vida-app/icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "/vida-app/icon-512.png", "sizes": "512x512", "type": "image/png" }
+  ],
+  "shortcuts": [
     {
-      "src": "/vida-app/icon-192.png",
-      "sizes": "192x192",
-      "type": "image/png"
+      "name": "Hoje",
+      "short_name": "Hoje",
+      "description": "Ver tarefas de hoje",
+      "url": "/vida-app/#/",
+      "icons": [{ "src": "/vida-app/icon-192.png", "sizes": "192x192" }]
     },
     {
-      "src": "/vida-app/icon-512.png",
-      "sizes": "512x512",
-      "type": "image/png"
+      "name": "Hábitos",
+      "short_name": "Hábitos",
+      "description": "Verificar hábitos de hoje",
+      "url": "/vida-app/#/habitos",
+      "icons": [{ "src": "/vida-app/icon-192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Foco",
+      "short_name": "Foco",
+      "description": "Iniciar sessão de foco",
+      "url": "/vida-app/#/foco",
+      "icons": [{ "src": "/vida-app/icon-192.png", "sizes": "192x192" }]
     }
   ]
 }

@@ -7,6 +7,7 @@ import { Calendar } from './pages/Calendar'
 import { Projects } from './pages/Projects'
 import { Focus } from './pages/Focus'
 import { WeeklyReview } from './pages/WeeklyReview'
+import { Habits } from './pages/Habits'
 import { Login } from './pages/Login'
 import { Register } from './pages/Register'
 import './index.css'
@@ -37,6 +38,7 @@ function AppRoutes() {
       <div className="max-w-md mx-auto min-h-svh relative bg-[#f2f2f7] overflow-x-hidden">
         <Routes>
           <Route path="/" element={<Today />} />
+          <Route path="/habitos" element={<Habits />} />
           <Route path="/calendario" element={<Calendar />} />
           <Route path="/projetos" element={<Projects />} />
           <Route path="/foco" element={<Focus />} />

@@ -17,7 +17,7 @@ export function useLogs() {
     return data ?? []
   }, [user])
 
-  const upsertLog = useCallback(async (log: { date: string; mood?: number; notes?: string }) => {
+  const upsertLog = useCallback(async (log: { date: string; mood?: number; notes?: string; gratitude?: string; win_of_day?: string }) => {
     if (!user) return
     const { data } = await supabase
       .from('daily_logs')

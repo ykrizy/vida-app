@@ -4,9 +4,9 @@ export interface Task {
   title: string
   description?: string
   due_date?: string
-  due_time?: string // formato HH:MM, opcional
+  due_time?: string
   is_recurring: boolean
-  recurrence_days?: number[] // 0=Sun 1=Mon ... 6=Sat
+  recurrence_days?: number[]
   completed: boolean
   completed_at?: string
   project_id?: string
@@ -30,7 +30,9 @@ export interface DailyLog {
   user_id: string
   date: string
   notes?: string
-  mood?: number // 1-5
+  mood?: number
+  gratitude?: string
+  win_of_day?: string
   created_at: string
 }
 
@@ -54,4 +56,22 @@ export interface FocusSession {
   duration_minutes: number
   started_at: string
   ended_at?: string
+}
+
+export interface Habit {
+  id: string
+  user_id: string
+  name: string
+  emoji: string
+  color: string
+  frequency_days: number[] // 0=Dom, 1=Seg ... 6=Sáb
+  created_at: string
+}
+
+export interface HabitCompletion {
+  id: string
+  habit_id: string
+  user_id: string
+  completed_date: string // yyyy-MM-dd
+  created_at: string
 }
