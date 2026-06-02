@@ -42,7 +42,7 @@ export function AddTaskModal({ onClose, onAdd, projects, defaultDate }: Props) {
     <div className="fixed inset-0 z-50 flex items-end" style={{ background: 'rgba(0,0,0,0.5)' }} onClick={onClose}>
       <div
         className="w-full max-h-[92svh] overflow-y-auto rounded-t-3xl bg-white"
-        style={{ paddingBottom: 'calc(1.5rem + env(safe-area-inset-bottom, 0px))', maxWidth: '448px', marginLeft: 'auto', marginRight: 'auto' }}
+        style={{ paddingBottom: 'calc(5.5rem + env(safe-area-inset-bottom, 0px))', maxWidth: '448px', marginLeft: 'auto', marginRight: 'auto' }}
         onClick={e => e.stopPropagation()}
       >
         {/* Handle */}

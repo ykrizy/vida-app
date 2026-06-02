@@ -19,7 +19,7 @@ export function Today() {
   const { user, signOut } = useAuth()
   const { getTodayTasks, toggleTask, deleteTask, addTask } = useTasks()
   const { projects } = useProjects()
-  const { upsertLog, getLogByDate, fetchLogs } = useLogs()
+  const { upsertLog, fetchLogs } = useLogs()
   const [showAdd, setShowAdd] = useState(false)
   const [mood, setMood] = useState<number | undefined>()
   const [note, setNote] = useState('')
@@ -35,9 +35,13 @@ export function Today() {
   const greeting = hour < 12 ? 'Bom dia' : hour < 19 ? 'Boa tarde' : 'Boa noite'
 
   useEffect(() => {
-    fetchLogs().then(() => {
-      const log = getLogByDate(todayStr)
-      if (log) { setMood(log.mood); setNote(log.notes || '') }
+    // Usa os dados devolvidos diretamente, não o estado (que ainda não atualizou)
+    fetchLogs().then((data) => {
+      const log = data.find((l: { date: string; mood?: number; notes?: string }) => l.date === todayStr)
+      if (log) {
+        setMood(log.mood)
+        setNote(log.notes || '')
+      }
     })
   }, [todayStr])
 
