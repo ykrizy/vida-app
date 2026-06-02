@@ -24,7 +24,7 @@ export function Today() {
   const { tasks, getTodayTasks, toggleTask, deleteTask, addTask } = useTasks()
   const { projects } = useProjects()
   const { upsertLog, fetchLogs, logs } = useLogs()
-  const { completions } = useHabits()
+  const { completions, getMissedHabitsCount } = useHabits()
 
   const [showAdd, setShowAdd] = useState(false)
   const [showJournal, setShowJournal] = useState(false)
@@ -41,11 +41,14 @@ export function Today() {
   const greeting = hour < 12 ? 'Bom dia' : hour < 19 ? 'Boa tarde' : 'Boa noite'
 
   // Gamification
+  const overdueTasks = tasks.filter(t => !t.completed && t.due_date && t.due_date < todayStr).length
   const xp = computeXP({
-    completedTasks: tasks.filter(t => t.completed).length,
+    completedTasks:   tasks.filter(t => t.completed).length,
     habitCompletions: completions.length,
-    dailyLogs: logs.length,
-    weeklyReviews: 0,
+    dailyLogs:        logs.length,
+    weeklyReviews:    0,
+    overdueTasks,
+    missedHabitDays:  getMissedHabitsCount(),
   })
   const levelInfo = getLevelInfo(xp)
 

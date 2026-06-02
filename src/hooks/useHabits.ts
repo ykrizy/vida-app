@@ -105,6 +105,29 @@ export function useHabits() {
     return result
   }, [completions])
 
+  // Count total missed habit-days across all habits in the last 30 days
+  // (excludes today — you still have a chance to complete today's habits)
+  const getMissedHabitsCount = useCallback((): number => {
+    const today = new Date()
+    today.setHours(0, 0, 0, 0)
+    let missed = 0
+    for (const habit of habits) {
+      const created = new Date(habit.created_at)
+      created.setHours(0, 0, 0, 0)
+      for (let i = 1; i <= 30; i++) {
+        const checkDate = subDays(today, i)
+        if (checkDate < created) break // don't penalise days before habit existed
+        const dow = checkDate.getDay()
+        if (!habit.frequency_days.includes(dow)) continue
+        const dateStr = format(checkDate, 'yyyy-MM-dd')
+        if (!completions.some(c => c.habit_id === habit.id && c.completed_date === dateStr)) {
+          missed++
+        }
+      }
+    }
+    return missed
+  }, [habits, completions])
+
   return {
     habits,
     completions,
@@ -116,6 +139,7 @@ export function useHabits() {
     getStreak,
     getTodayHabits,
     getLast7Days,
+    getMissedHabitsCount,
     reload: load,
   }
 }

@@ -21,7 +21,7 @@ const TIERS = [
   { from: 71,  to: 80,  name: 'Élite',          icon: '💎' },
   { from: 81,  to: 90,  name: 'Lenda',          icon: '👑' },
   { from: 91,  to: 99,  name: 'Imortal',        icon: '🌌' },
-  { from: 100, to: 100, name: 'Transcendente',  icon: '✨' },
+  { from: 100, to: 100, name: 'Batman',          icon: '🦇' },
 ]
 
 // ── XP curve ─────────────────────────────────────────────────────────────────
@@ -48,36 +48,55 @@ const ALL_LEVELS = Array.from({ length: 100 }, (_, i) => {
 
 // ── Public API ────────────────────────────────────────────────────────────────
 export function getLevelInfo(xp: number): LevelInfo {
+  const safeXp = Math.max(0, xp)   // XP can never go below 0
   let current = ALL_LEVELS[0]
   for (const l of ALL_LEVELS) {
-    if (xp >= l.minXp) current = l
+    if (safeXp >= l.minXp) current = l
     else break
   }
   const next     = ALL_LEVELS[current.level] ?? null   // index = level (0-indexed array)
   const progress = next
-    ? Math.min(100, Math.round(((xp - current.minXp) / (next.minXp - current.minXp)) * 100))
+    ? Math.min(100, Math.round(((safeXp - current.minXp) / (next.minXp - current.minXp)) * 100))
     : 100
-  return { ...current, xp, nextXp: next?.minXp ?? null, progress }
+  return { ...current, xp: safeXp, nextXp: next?.minXp ?? null, progress }
 }
 
-// ── XP sources ────────────────────────────────────────────────────────────────
-// Rates are tuned so an active user reaches Lv100 in ≈1 year.
-//   task completed  → +12 XP
-//   habit completed → +15 XP
-//   daily journal   → +8  XP
-//   weekly review   → +60 XP
+// ── XP sources & penalties ────────────────────────────────────────────────────
+// Gains  — tuned so an active user reaches Lv100 in ≈1 year:
+//   task completed       → +12 XP
+//   habit completed      → +15 XP
+//   daily journal        → +8  XP
+//   weekly review        → +60 XP
+//
+// Penalties — accountability for dropped balls:
+//   task overdue (past due-date, not done)   → -4 XP each
+//   missed habit day (scheduled, not done)   → -3 XP each
+//   day without journal (last 30 days)       → -2 XP each
+//   missed weekly review                     → -10 XP each
 export function computeXP(params: {
-  completedTasks:   number
-  habitCompletions: number
-  dailyLogs:        number
-  weeklyReviews:    number
+  completedTasks:       number
+  habitCompletions:     number
+  dailyLogs:            number
+  weeklyReviews:        number
+  // penalties (all optional — default 0 so old callers still work)
+  overdueTasks?:        number
+  missedHabitDays?:     number
+  missedJournalDays?:   number
+  missedWeeklyReviews?: number
 }): number {
-  return (
+  const earned =
     params.completedTasks   * 12 +
     params.habitCompletions * 15 +
     params.dailyLogs        * 8  +
     params.weeklyReviews    * 60
-  )
+
+  const lost =
+    (params.overdueTasks        ?? 0) * 4  +
+    (params.missedHabitDays     ?? 0) * 3  +
+    (params.missedJournalDays   ?? 0) * 2  +
+    (params.missedWeeklyReviews ?? 0) * 10
+
+  return Math.max(0, earned - lost)
 }
 
 // Export so other components can inspect the full table if needed
