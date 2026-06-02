@@ -1,10 +1,21 @@
-import { Trash2, Clock } from 'lucide-react'
+import { Trash2, Clock, RefreshCw } from 'lucide-react'
 import type { Task } from '../types'
 
 const priorityDot: Record<Task['priority'], string> = {
   high: 'bg-red-400',
   medium: 'bg-amber-400',
   low: 'bg-gray-300',
+}
+
+const DAY_NAMES = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb']
+
+function getRecurrenceLabel(task: Task): string | null {
+  if (!task.is_recurring || !task.recurrence_days?.length) return null
+  const days = [...task.recurrence_days].sort((a, b) => a - b)
+  if (days.length === 7) return 'Todos os dias'
+  if (days.join(',') === '1,2,3,4,5') return 'Dias úteis'
+  if (days.join(',') === '0,6') return 'Fim de semana'
+  return days.map(d => DAY_NAMES[d]).join(', ')
 }
 
 interface Props {
@@ -14,10 +25,13 @@ interface Props {
 }
 
 export function TaskItem({ task, onToggle, onDelete }: Props) {
+  const recurrenceLabel = getRecurrenceLabel(task)
+
   return (
     <div className={`flex items-center gap-3 px-4 py-3.5 bg-white rounded-2xl transition-all ${
       task.completed ? 'opacity-50' : ''
     }`}>
+      {/* Checkbox */}
       <button
         onClick={() => onToggle(task.id)}
         className={`w-6 h-6 rounded-full border-2 flex items-center justify-center flex-shrink-0 transition-all ${
@@ -33,13 +47,14 @@ export function TaskItem({ task, onToggle, onDelete }: Props) {
         )}
       </button>
 
+      {/* Content */}
       <div className="flex-1 min-w-0">
         <p className={`text-[15px] font-medium leading-snug ${
           task.completed ? 'line-through text-gray-400' : 'text-gray-900'
         }`}>
           {task.title}
         </p>
-        <div className="flex items-center gap-2 mt-0.5">
+        <div className="flex items-center gap-2 mt-0.5 flex-wrap">
           {task.due_time && (
             <span className={`flex items-center gap-1 text-xs font-semibold ${
               task.completed ? 'text-gray-400' : 'text-indigo-500'
@@ -48,12 +63,21 @@ export function TaskItem({ task, onToggle, onDelete }: Props) {
               {task.due_time.slice(0, 5)}
             </span>
           )}
+          {recurrenceLabel && (
+            <span className={`flex items-center gap-1 text-xs font-medium ${
+              task.completed ? 'text-gray-400' : 'text-indigo-400'
+            }`}>
+              <RefreshCw size={10} />
+              {recurrenceLabel}
+            </span>
+          )}
           {task.description && (
             <p className="text-xs text-gray-400 line-clamp-1">{task.description}</p>
           )}
         </div>
       </div>
 
+      {/* Priority + delete */}
       <div className="flex items-center gap-2 flex-shrink-0">
         <span className={`w-2 h-2 rounded-full ${priorityDot[task.priority]}`} />
         <button
