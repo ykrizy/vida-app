@@ -74,7 +74,7 @@ function AddProjectModal({ onClose, onAdd }: { onClose: () => void; onAdd: (p: O
 }
 
 export function Projects() {
-  const { projects, addProject, deleteProject } = useProjects()
+  const { projects, addProject } = useProjects()
   const { tasks, toggleTask, deleteTask, addTask } = useTasks()
   const [showAdd, setShowAdd] = useState(false)
   const [selected, setSelected] = useState<Project | null>(null)
