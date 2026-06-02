@@ -109,7 +109,7 @@ export function Today() {
             </h1>
           </div>
           <div className="flex items-center gap-2 mt-1">
-            {!notifAsked && Notification.permission === 'default' && (
+            {!notifAsked && typeof Notification !== 'undefined' && Notification.permission === 'default' && (
               <button
                 onClick={handleAskNotifications}
                 className="w-9 h-9 rounded-full flex items-center justify-center"

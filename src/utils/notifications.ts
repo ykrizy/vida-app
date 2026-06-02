@@ -9,7 +9,7 @@ export async function requestNotificationPermission(): Promise<boolean> {
 }
 
 function showNotification(title: string, body: string) {
-  if (Notification.permission !== 'granted') return
+  if (!('Notification' in window) || Notification.permission !== 'granted') return
   try {
     new Notification(title, {
       body,
@@ -26,7 +26,7 @@ function showNotification(title: string, body: string) {
 const activeTimeouts: ReturnType<typeof setTimeout>[] = []
 
 export function scheduleTodayNotifications(tasks: Task[]) {
-  if (Notification.permission !== 'granted') return
+  if (!('Notification' in window) || Notification.permission !== 'granted') return
 
   // Clear previously scheduled
   activeTimeouts.forEach(t => clearTimeout(t))
