@@ -80,7 +80,8 @@ export function WeeklyReview() {
 
   return (
     <div className="min-h-svh bg-[#f2f2f7] pb-nav overflow-x-hidden">
-      <div className="bg-white px-4 pt-14 pb-4 border-b border-gray-100">
+      <div className="bg-white px-4 pb-4 border-b border-gray-100"
+        style={{ paddingTop: 'calc(3.5rem + env(safe-area-inset-top, 0px))' }}>
         <h1 className="text-xl font-bold text-gray-800">Avaliação Semanal</h1>
         <div className="flex items-center justify-between mt-3">
           <button onClick={() => setWeekOffset(o => o - 1)} className="p-2 rounded-full hover:bg-gray-100">
