@@ -42,7 +42,7 @@ export function AddTaskModal({ onClose, onAdd, projects, defaultDate }: Props) {
     <div className="fixed inset-0 z-50 flex items-end" style={{ background: 'rgba(0,0,0,0.5)' }} onClick={onClose}>
       <div
         className="w-full max-h-[92svh] overflow-y-auto rounded-t-3xl bg-white"
-        style={{ paddingBottom: 'calc(1.5rem + env(safe-area-inset-bottom, 0px))' }}
+        style={{ paddingBottom: 'calc(1.5rem + env(safe-area-inset-bottom, 0px))', maxWidth: '448px', marginLeft: 'auto', marginRight: 'auto' }}
         onClick={e => e.stopPropagation()}
       >
         {/* Handle */}
@@ -52,7 +52,7 @@ export function AddTaskModal({ onClose, onAdd, projects, defaultDate }: Props) {
 
         <div className="px-5 pb-2 pt-1 flex items-center justify-between">
           <h2 className="text-[18px] font-bold text-gray-900">Nova Tarefa</h2>
-          <button onClick={onClose} className="w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center">
+          <button onClick={onClose} className="w-9 h-9 bg-gray-100 rounded-full flex items-center justify-center flex-shrink-0">
             <X size={16} className="text-gray-500" />
           </button>
         </div>

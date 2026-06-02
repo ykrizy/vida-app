@@ -34,7 +34,7 @@ function AppRoutes() {
 
   return (
     <HashRouter>
-      <div className="max-w-md mx-auto min-h-svh relative bg-gray-50">
+      <div className="max-w-md mx-auto min-h-svh relative bg-[#f2f2f7] overflow-x-hidden">
         <Routes>
           <Route path="/" element={<Today />} />
           <Route path="/calendario" element={<Calendar />} />
