@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { X, Plus, FolderOpen } from 'lucide-react'
+import { X, Plus, FolderOpen, Trash2 } from 'lucide-react'
 import { useProjects } from '../hooks/useProjects'
 import { useTasks } from '../hooks/useTasks'
 import type { Project } from '../types'
@@ -78,11 +78,12 @@ function AddProjectModal({ onClose, onAdd }: { onClose: () => void; onAdd: (p: O
 }
 
 export function Projects() {
-  const { projects, addProject } = useProjects()
+  const { projects, addProject, deleteProject } = useProjects()
   const { tasks, toggleTask, deleteTask, addTask } = useTasks()
   const [showAdd, setShowAdd] = useState(false)
   const [selected, setSelected] = useState<Project | null>(null)
   const [showAddTask, setShowAddTask] = useState(false)
+  const [confirmDelete, setConfirmDelete] = useState(false)
 
   const projectTasks = selected ? tasks.filter(t => t.project_id === selected.id) : []
   const noProjectTasks = tasks.filter(t => !t.project_id)
@@ -90,26 +91,43 @@ export function Projects() {
   if (selected) {
     const completed = projectTasks.filter(t => t.completed).length
     return (
-      <div className="min-h-svh bg-gray-50 pb-safe">
-        <div className="px-4 pt-14 pb-4" style={{ backgroundColor: selected.color }}>
-          <button onClick={() => setSelected(null)} className="text-white/70 text-sm mb-3">← Projetos</button>
-          <div className="text-4xl mb-1">{selected.emoji}</div>
-          <h1 className="text-white text-xl font-bold">{selected.name}</h1>
+      <div className="min-h-svh bg-[#f2f2f7] pb-nav overflow-x-hidden">
+        {/* Header colorido */}
+        <div className="px-4 pb-5" style={{
+          backgroundColor: selected.color,
+          paddingTop: 'calc(3.5rem + env(safe-area-inset-top, 0px))',
+        }}>
+          <div className="flex items-center justify-between mb-4">
+            <button onClick={() => { setSelected(null); setConfirmDelete(false) }}
+              className="flex items-center gap-1.5 text-white/80 text-sm font-medium">
+              ← Projetos
+            </button>
+            <button
+              onClick={() => setConfirmDelete(true)}
+              className="w-9 h-9 rounded-full flex items-center justify-center"
+              style={{ background: 'rgba(255,255,255,0.2)' }}
+            >
+              <Trash2 size={16} className="text-white" />
+            </button>
+          </div>
+          <div className="text-4xl mb-2">{selected.emoji}</div>
+          <h1 className="text-white text-[22px] font-bold">{selected.name}</h1>
           {selected.description && <p className="text-white/70 text-sm mt-1">{selected.description}</p>}
           <p className="text-white/60 text-xs mt-2">{completed}/{projectTasks.length} tarefas completas</p>
         </div>
 
         <div className="px-4 pt-4">
           <div className="flex items-center justify-between mb-3">
-            <h2 className="text-sm font-semibold text-gray-700">Tarefas</h2>
-            <button onClick={() => setShowAddTask(true)} className="flex items-center gap-1 text-indigo-600 text-sm font-medium">
-              <Plus size={16} /> Adicionar
+            <h2 className="text-[17px] font-bold text-gray-900">Tarefas</h2>
+            <button onClick={() => setShowAddTask(true)}
+              className="flex items-center gap-1.5 bg-indigo-500 text-white text-sm font-semibold px-3.5 py-2 rounded-full">
+              <Plus size={15} /> Adicionar
             </button>
           </div>
           {projectTasks.length === 0 ? (
-            <div className="text-center py-10 text-gray-400">
-              <p className="text-3xl mb-2">📋</p>
-              <p className="text-sm">Sem tarefas neste projeto</p>
+            <div className="text-center py-12 text-gray-400">
+              <p className="text-4xl mb-2">📋</p>
+              <p className="text-sm font-medium">Sem tarefas neste projeto</p>
             </div>
           ) : (
             <div className="space-y-2">
@@ -119,6 +137,33 @@ export function Projects() {
             </div>
           )}
         </div>
+
+        {/* Modal confirmar eliminação */}
+        {confirmDelete && (
+          <div className="fixed inset-0 z-50 flex items-end" style={{ background: 'rgba(0,0,0,0.5)' }}>
+            <div className="w-full bg-white rounded-t-3xl p-6"
+              style={{ paddingBottom: 'calc(2rem + env(safe-area-inset-bottom, 0px))' }}>
+              <p className="text-[18px] font-bold text-gray-900 mb-1">Eliminar projeto?</p>
+              <p className="text-gray-500 text-sm mb-6">
+                O projeto <strong>{selected.name}</strong> será eliminado. As tarefas ficam sem projeto.
+              </p>
+              <div className="space-y-2">
+                <button
+                  onClick={() => { deleteProject(selected.id); setSelected(null); setConfirmDelete(false) }}
+                  className="w-full py-4 bg-red-500 text-white rounded-2xl font-semibold text-[15px]"
+                >
+                  Sim, eliminar
+                </button>
+                <button
+                  onClick={() => setConfirmDelete(false)}
+                  className="w-full py-4 bg-gray-100 text-gray-700 rounded-2xl font-semibold text-[15px]"
+                >
+                  Cancelar
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
 
         {showAddTask && (
           <AddTaskModal
@@ -132,7 +177,7 @@ export function Projects() {
   }
 
   return (
-    <div className="min-h-svh bg-gray-50 pb-safe">
+    <div className="min-h-svh bg-[#f2f2f7] pb-nav overflow-x-hidden">
       <div className="bg-white px-4 pt-14 pb-4 border-b border-gray-100">
         <div className="flex items-center justify-between">
           <h1 className="text-xl font-bold text-gray-800">Projetos</h1>
