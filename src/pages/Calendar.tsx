@@ -25,7 +25,7 @@ export function Calendar() {
   const selectedTasks = getTasksForDate(selectedDate)
 
   return (
-    <div className="min-h-svh bg-gray-50 pb-safe">
+    <div className="min-h-svh bg-[#f2f2f7] pb-nav overflow-x-hidden">
       <div className="bg-white px-4 pt-14 pb-4 border-b border-gray-100">
         {/* Month nav */}
         <div className="flex items-center justify-between mb-4">

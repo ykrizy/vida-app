@@ -69,7 +69,7 @@ export function Today() {
   })
 
   return (
-    <div className="min-h-svh bg-[#f2f2f7] pb-nav">
+    <div className="min-h-svh bg-[#f2f2f7] pb-nav overflow-x-hidden">
 
       {/* Header */}
       <div

@@ -62,7 +62,7 @@ export function Focus() {
   const strokeDash = circumference - (progress / 100) * circumference
 
   return (
-    <div className="min-h-svh bg-gray-50 pb-safe">
+    <div className="min-h-svh bg-[#f2f2f7] pb-nav overflow-x-hidden">
       <div className="bg-white px-4 pt-14 pb-4 border-b border-gray-100">
         <h1 className="text-xl font-bold text-gray-800">Foco</h1>
         <p className="text-sm text-gray-400 mt-0.5">Mantém-te concentrado e produtivo</p>

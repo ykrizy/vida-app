@@ -79,7 +79,7 @@ export function WeeklyReview() {
   const rateBg = stats.rate >= 80 ? 'bg-green-500' : stats.rate >= 50 ? 'bg-amber-400' : 'bg-red-400'
 
   return (
-    <div className="min-h-svh bg-gray-50 pb-safe">
+    <div className="min-h-svh bg-[#f2f2f7] pb-nav overflow-x-hidden">
       <div className="bg-white px-4 pt-14 pb-4 border-b border-gray-100">
         <h1 className="text-xl font-bold text-gray-800">Avaliação Semanal</h1>
         <div className="flex items-center justify-between mt-3">
