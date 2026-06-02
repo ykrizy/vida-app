@@ -25,18 +25,27 @@ const TIERS = [
 ]
 
 // ── XP curve ─────────────────────────────────────────────────────────────────
-// Total XP needed to reach level N = floor(60 × (N-1)^1.5)
+// Geometric (exponential) growth: each level costs 3% more XP than the last.
+//   Total XP to reach level N = round(100 × (1.03^(N-1) − 1) / 0.03)
+//
+// XP needed per level (incremental):
+//   Lvl  1→ 2  :   100 XP
+//   Lvl 10→11  :   131 XP
+//   Lvl 25→26  :   209 XP
+//   Lvl 50→51  :   426 XP
+//   Lvl 75→76  :   908 XP
+//   Lvl 99→100 : 1 812 XP   ← 18× harder than level 1
 //
 // Benchmarks (active user ≈ 160 XP/day):
-//   Lvl 10  →  1 620 XP  (~10 days)
-//   Lvl 20  →  4 968 XP  (~31 days / 1 month)
-//   Lvl 30  →  9 372 XP  (~59 days / 2 months)
-//   Lvl 50  → 20 580 XP  (~129 days / 4 months)
-//   Lvl 75  → 38 190 XP  (~239 days / 8 months)
-//   Lvl 100 → 59 100 XP  (~370 days / ~1 year)
+//   Lvl 10  →  1 016 XP  (~6 days)
+//   Lvl 20  →  2 512 XP  (~16 days)
+//   Lvl 30  →  4 522 XP  (~1 month)
+//   Lvl 50  → 10 854 XP  (~2 months)
+//   Lvl 75  → 26 373 XP  (~5.5 months)
+//   Lvl 100 → 58 867 XP  (~1 year)
 function minXpForLevel(level: number): number {
   if (level <= 1) return 0
-  return Math.floor(60 * Math.pow(level - 1, 1.5))
+  return Math.round(100 * (Math.pow(1.03, level - 1) - 1) / 0.03)
 }
 
 // Build all 100 levels
