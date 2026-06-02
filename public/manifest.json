@@ -2,19 +2,20 @@
   "name": "Vida — Guia de Vida",
   "short_name": "Vida",
   "description": "O teu guia pessoal de produtividade e bem-estar",
-  "start_url": "/",
+  "start_url": "/vida-app/",
+  "scope": "/vida-app/",
   "display": "standalone",
   "background_color": "#f8f9fa",
   "theme_color": "#6366f1",
   "orientation": "portrait",
   "icons": [
     {
-      "src": "/icon-192.png",
+      "src": "/vida-app/icon-192.png",
       "sizes": "192x192",
       "type": "image/png"
     },
     {
-      "src": "/icon-512.png",
+      "src": "/vida-app/icon-512.png",
       "sizes": "512x512",
       "type": "image/png"
     }

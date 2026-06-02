@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { X, RefreshCw } from 'lucide-react'
+import { X } from 'lucide-react'
 import type { Task, Project } from '../types'
 
 const DAYS = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb']
@@ -20,11 +20,8 @@ export function AddTaskModal({ onClose, onAdd, projects, defaultDate }: Props) {
   const [recurrenceDays, setRecurrenceDays] = useState<number[]>([])
   const [projectId, setProjectId] = useState('')
 
-  const toggleDay = (day: number) => {
-    setRecurrenceDays(prev =>
-      prev.includes(day) ? prev.filter(d => d !== day) : [...prev, day]
-    )
-  }
+  const toggleDay = (day: number) =>
+    setRecurrenceDays(prev => prev.includes(day) ? prev.filter(d => d !== day) : [...prev, day])
 
   const handleSubmit = () => {
     if (!title.trim()) return
@@ -42,86 +39,75 @@ export function AddTaskModal({ onClose, onAdd, projects, defaultDate }: Props) {
   }
 
   return (
-    <div className="fixed inset-0 bg-black/40 z-50 flex items-end" onClick={onClose}>
+    <div className="fixed inset-0 z-50 flex items-end" style={{ background: 'rgba(0,0,0,0.5)' }} onClick={onClose}>
       <div
-        className="bg-white rounded-t-2xl w-full p-5 pb-8 max-h-[90vh] overflow-y-auto"
+        className="w-full max-h-[92svh] overflow-y-auto rounded-t-3xl bg-white"
+        style={{ paddingBottom: 'calc(1.5rem + env(safe-area-inset-bottom, 0px))' }}
         onClick={e => e.stopPropagation()}
       >
-        <div className="flex items-center justify-between mb-4">
-          <h2 className="text-lg font-semibold text-gray-800">Nova Tarefa</h2>
-          <button onClick={onClose} className="text-gray-400 hover:text-gray-600">
-            <X size={20} />
+        {/* Handle */}
+        <div className="flex justify-center pt-3 pb-1">
+          <div className="w-10 h-1 bg-gray-200 rounded-full" />
+        </div>
+
+        <div className="px-5 pb-2 pt-1 flex items-center justify-between">
+          <h2 className="text-[18px] font-bold text-gray-900">Nova Tarefa</h2>
+          <button onClick={onClose} className="w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center">
+            <X size={16} className="text-gray-500" />
           </button>
         </div>
 
-        <div className="space-y-3">
+        <div className="px-5 space-y-4 pt-2">
           <input
-            autoFocus
-            type="text"
-            placeholder="O que precisas de fazer?"
-            value={title}
-            onChange={e => setTitle(e.target.value)}
-            className="w-full px-4 py-3 bg-gray-50 rounded-xl text-sm text-gray-800 placeholder-gray-400 border border-gray-100 focus:border-indigo-300 focus:bg-white transition-all"
+            autoFocus type="text" placeholder="O que precisas de fazer?"
+            value={title} onChange={e => setTitle(e.target.value)}
+            className="w-full px-4 py-3.5 bg-gray-50 rounded-2xl text-[15px] text-gray-900 placeholder-gray-400"
           />
 
           <textarea
-            placeholder="Descrição (opcional)"
-            value={description}
-            onChange={e => setDescription(e.target.value)}
-            rows={2}
-            className="w-full px-4 py-3 bg-gray-50 rounded-xl text-sm text-gray-800 placeholder-gray-400 border border-gray-100 focus:border-indigo-300 focus:bg-white transition-all resize-none"
+            placeholder="Descrição (opcional)" value={description}
+            onChange={e => setDescription(e.target.value)} rows={2}
+            className="w-full px-4 py-3.5 bg-gray-50 rounded-2xl text-[15px] text-gray-900 placeholder-gray-400 resize-none"
           />
 
           {/* Priority */}
           <div>
-            <p className="text-xs font-medium text-gray-500 mb-2">Prioridade</p>
+            <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2.5">Prioridade</p>
             <div className="flex gap-2">
-              {(['low', 'medium', 'high'] as const).map(p => (
-                <button
-                  key={p}
-                  onClick={() => setPriority(p)}
-                  className={`flex-1 py-2 rounded-lg text-xs font-medium border transition-all ${
-                    priority === p
-                      ? p === 'high' ? 'bg-red-500 text-white border-red-500'
-                        : p === 'medium' ? 'bg-amber-400 text-white border-amber-400'
-                        : 'bg-gray-400 text-white border-gray-400'
-                      : 'bg-gray-50 text-gray-500 border-gray-100'
+              {([
+                { key: 'low', label: 'Baixa', active: 'bg-gray-500 text-white', dot: 'bg-gray-300' },
+                { key: 'medium', label: 'Média', active: 'bg-amber-400 text-white', dot: 'bg-amber-400' },
+                { key: 'high', label: 'Alta', active: 'bg-red-500 text-white', dot: 'bg-red-400' },
+              ] as const).map(({ key, label, active }) => (
+                <button key={key} onClick={() => setPriority(key)}
+                  className={`flex-1 py-2.5 rounded-2xl text-sm font-semibold transition-all border ${
+                    priority === key ? active + ' border-transparent' : 'bg-gray-50 text-gray-600 border-gray-100'
                   }`}
                 >
-                  {p === 'high' ? 'Alta' : p === 'medium' ? 'Média' : 'Baixa'}
+                  {label}
                 </button>
               ))}
             </div>
           </div>
 
-          {/* Recurring toggle */}
-          <div className="flex items-center justify-between bg-gray-50 rounded-xl px-4 py-3">
-            <div className="flex items-center gap-2">
-              <RefreshCw size={16} className="text-gray-400" />
-              <span className="text-sm text-gray-700">Tarefa recorrente</span>
-            </div>
-            <button
-              onClick={() => setIsRecurring(!isRecurring)}
-              className={`w-11 h-6 rounded-full transition-colors relative ${isRecurring ? 'bg-indigo-500' : 'bg-gray-300'}`}
-            >
-              <span className={`absolute top-0.5 w-5 h-5 bg-white rounded-full shadow transition-all ${isRecurring ? 'left-5' : 'left-0.5'}`} />
+          {/* Recurring */}
+          <div className="flex items-center justify-between bg-gray-50 rounded-2xl px-4 py-3.5">
+            <p className="text-[15px] font-medium text-gray-800">Repetir todos os dias</p>
+            <button onClick={() => setIsRecurring(!isRecurring)}
+              className={`w-12 h-7 rounded-full transition-colors relative ${isRecurring ? 'bg-indigo-500' : 'bg-gray-300'}`}>
+              <span className={`absolute top-0.5 w-6 h-6 bg-white rounded-full shadow transition-all ${isRecurring ? 'left-[22px]' : 'left-0.5'}`} />
             </button>
           </div>
 
           {isRecurring ? (
             <div>
-              <p className="text-xs font-medium text-gray-500 mb-2">Repetir nos dias</p>
-              <div className="flex gap-1.5">
+              <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2.5">Dias da semana</p>
+              <div className="grid grid-cols-7 gap-1.5">
                 {DAYS.map((day, i) => (
-                  <button
-                    key={i}
-                    onClick={() => toggleDay(i)}
-                    className={`flex-1 py-2 rounded-lg text-xs font-medium transition-all ${
-                      recurrenceDays.includes(i)
-                        ? 'bg-indigo-500 text-white'
-                        : 'bg-gray-50 text-gray-500 border border-gray-100'
-                    }`}
-                  >
+                  <button key={i} onClick={() => toggleDay(i)}
+                    className={`py-2.5 rounded-xl text-xs font-semibold transition-all ${
+                      recurrenceDays.includes(i) ? 'bg-indigo-500 text-white' : 'bg-gray-50 text-gray-500'
+                    }`}>
                     {day}
                   </button>
                 ))}
@@ -129,37 +115,26 @@ export function AddTaskModal({ onClose, onAdd, projects, defaultDate }: Props) {
             </div>
           ) : (
             <div>
-              <p className="text-xs font-medium text-gray-500 mb-2">Data</p>
-              <input
-                type="date"
-                value={dueDate}
-                onChange={e => setDueDate(e.target.value)}
-                className="w-full px-4 py-3 bg-gray-50 rounded-xl text-sm text-gray-800 border border-gray-100 focus:border-indigo-300 focus:bg-white transition-all"
+              <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2.5">Data</p>
+              <input type="date" value={dueDate} onChange={e => setDueDate(e.target.value)}
+                className="w-full px-4 py-3.5 bg-gray-50 rounded-2xl text-[15px] text-gray-900"
               />
             </div>
           )}
 
           {projects.length > 0 && (
             <div>
-              <p className="text-xs font-medium text-gray-500 mb-2">Projeto</p>
-              <select
-                value={projectId}
-                onChange={e => setProjectId(e.target.value)}
-                className="w-full px-4 py-3 bg-gray-50 rounded-xl text-sm text-gray-800 border border-gray-100 focus:border-indigo-300 transition-all"
-              >
-                <option value="">Nenhum projeto</option>
-                {projects.map(p => (
-                  <option key={p.id} value={p.id}>{p.emoji} {p.name}</option>
-                ))}
+              <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2.5">Projeto</p>
+              <select value={projectId} onChange={e => setProjectId(e.target.value)}
+                className="w-full px-4 py-3.5 bg-gray-50 rounded-2xl text-[15px] text-gray-900">
+                <option value="">Sem projeto</option>
+                {projects.map(p => <option key={p.id} value={p.id}>{p.emoji} {p.name}</option>)}
               </select>
             </div>
           )}
 
-          <button
-            onClick={handleSubmit}
-            disabled={!title.trim()}
-            className="w-full py-3.5 bg-indigo-500 text-white rounded-xl font-semibold text-sm disabled:opacity-40 disabled:cursor-not-allowed hover:bg-indigo-600 active:scale-95 transition-all"
-          >
+          <button onClick={handleSubmit} disabled={!title.trim()}
+            className="w-full py-4 bg-indigo-600 text-white rounded-2xl font-semibold text-[15px] disabled:opacity-40 active:scale-[0.98] transition-all">
             Adicionar Tarefa
           </button>
         </div>

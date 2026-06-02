@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { format } from 'date-fns'
 import { pt } from 'date-fns/locale'
-import { Plus, Smile, Meh, Frown, LogOut } from 'lucide-react'
+import { Plus, LogOut } from 'lucide-react'
 import { useTasks } from '../hooks/useTasks'
 import { useProjects } from '../hooks/useProjects'
 import { useLogs } from '../hooks/useLogs'
@@ -10,9 +10,9 @@ import { TaskItem } from '../components/TaskItem'
 import { AddTaskModal } from '../components/AddTaskModal'
 
 const MOODS = [
-  { icon: Frown, label: 'Mau', value: 1, color: 'text-red-400' },
-  { icon: Meh, label: 'Ok', value: 3, color: 'text-amber-400' },
-  { icon: Smile, label: 'Bom', value: 5, color: 'text-green-400' },
+  { emoji: '😞', label: 'Mau', value: 1 },
+  { emoji: '😐', label: 'Ok', value: 3 },
+  { emoji: '😄', label: 'Bom', value: 5 },
 ]
 
 export function Today() {
@@ -30,15 +30,14 @@ export function Today() {
   const tasks = getTodayTasks()
   const completed = tasks.filter(t => t.completed).length
   const progress = tasks.length > 0 ? (completed / tasks.length) * 100 : 0
-  const userName = user?.user_metadata?.name?.split(' ')[0] || 'olá'
+  const userName = user?.user_metadata?.name?.split(' ')[0] || ''
+  const hour = today.getHours()
+  const greeting = hour < 12 ? 'Bom dia' : hour < 19 ? 'Boa tarde' : 'Boa noite'
 
   useEffect(() => {
     fetchLogs().then(() => {
       const log = getLogByDate(todayStr)
-      if (log) {
-        setMood(log.mood)
-        setNote(log.notes || '')
-      }
+      if (log) { setMood(log.mood); setNote(log.notes || '') }
     })
   }, [todayStr])
 
@@ -53,114 +52,132 @@ export function Today() {
     setTimeout(() => setNoteSaved(false), 2000)
   }
 
-  const hour = today.getHours()
-  const greeting = hour < 12 ? 'Bom dia' : hour < 19 ? 'Boa tarde' : 'Boa noite'
+  const sortedTasks = [...tasks].sort((a, b) => {
+    if (a.completed !== b.completed) return a.completed ? 1 : -1
+    const p = { high: 0, medium: 1, low: 2 }
+    return p[a.priority] - p[b.priority]
+  })
 
   return (
-    <div className="min-h-svh bg-gray-50 pb-safe">
-      <div className="bg-gradient-to-br from-indigo-600 to-purple-600 px-5 pt-14 pb-8">
-        <div className="flex items-start justify-between">
+    <div className="min-h-svh bg-[#f2f2f7] pb-nav">
+
+      {/* Header */}
+      <div
+        className="px-5 pb-6"
+        style={{
+          background: 'linear-gradient(135deg, #5b5bd6 0%, #7c3aed 100%)',
+          paddingTop: 'calc(3.5rem + env(safe-area-inset-top, 0px))',
+        }}
+      >
+        <div className="flex items-start justify-between mb-5">
           <div>
-            <p className="text-indigo-200 text-sm capitalize">
+            <p className="text-indigo-200 text-sm capitalize font-medium">
               {format(today, "EEEE, d 'de' MMMM", { locale: pt })}
             </p>
-            <h1 className="text-white text-2xl font-bold mt-1">{greeting}, {userName}! 👋</h1>
+            <h1 className="text-white text-[26px] font-bold mt-0.5 tracking-tight">
+              {greeting}{userName ? `, ${userName}` : ''}! 👋
+            </h1>
           </div>
           <button
             onClick={signOut}
-            className="mt-1 p-2 rounded-full bg-white/10 text-white/70 hover:bg-white/20 transition-colors"
-            title="Sair"
+            className="mt-1 w-9 h-9 rounded-full flex items-center justify-center"
+            style={{ background: 'rgba(255,255,255,0.15)' }}
           >
-            <LogOut size={18} />
+            <LogOut size={16} className="text-white" />
           </button>
         </div>
 
-        <div className="mt-5 bg-white/10 rounded-xl p-4">
-          <div className="flex justify-between items-center mb-2">
-            <span className="text-white/80 text-sm">{completed}/{tasks.length} tarefas</span>
-            <span className="text-white font-semibold">{Math.round(progress)}%</span>
+        {/* Progress card */}
+        <div className="rounded-2xl p-4" style={{ background: 'rgba(255,255,255,0.15)' }}>
+          <div className="flex justify-between items-center mb-3">
+            <div>
+              <p className="text-white font-semibold text-lg">{Math.round(progress)}%</p>
+              <p className="text-indigo-200 text-xs">concluído hoje</p>
+            </div>
+            <p className="text-white/80 text-sm">{completed} / {tasks.length} tarefas</p>
           </div>
-          <div className="bg-white/20 rounded-full h-2">
+          <div className="rounded-full h-1.5" style={{ background: 'rgba(255,255,255,0.25)' }}>
             <div
-              className="bg-white rounded-full h-2 transition-all duration-500"
+              className="h-1.5 rounded-full bg-white transition-all duration-700"
               style={{ width: `${progress}%` }}
             />
           </div>
         </div>
       </div>
 
-      <div className="px-4 -mt-4">
+      <div className="px-4 -mt-1 space-y-4 pt-4">
+
         {/* Mood */}
-        <div className="bg-white rounded-2xl p-4 shadow-sm mb-4">
-          <p className="text-sm font-semibold text-gray-700 mb-3">Como te sentes hoje?</p>
-          <div className="flex gap-3 justify-around">
-            {MOODS.map(({ icon: Icon, label, value, color }) => (
+        <div className="bg-white rounded-2xl overflow-hidden">
+          <div className="px-4 pt-4 pb-1">
+            <p className="text-[13px] font-semibold text-gray-500 uppercase tracking-wide">Como te sentes?</p>
+          </div>
+          <div className="flex divide-x divide-gray-100">
+            {MOODS.map(({ emoji, label, value }) => (
               <button
                 key={value}
                 onClick={() => saveMood(value)}
-                className={`flex flex-col items-center gap-1 p-3 rounded-xl transition-all ${
-                  mood === value ? 'bg-indigo-50 scale-110' : 'hover:bg-gray-50'
+                className={`flex-1 flex flex-col items-center py-3.5 gap-1 transition-all ${
+                  mood === value ? 'bg-indigo-50' : 'active:bg-gray-50'
                 }`}
               >
-                <Icon size={28} className={color} />
-                <span className="text-xs text-gray-500">{label}</span>
+                <span className={`text-2xl transition-transform ${mood === value ? 'scale-125' : ''}`}>{emoji}</span>
+                <span className={`text-xs font-medium ${mood === value ? 'text-indigo-600' : 'text-gray-400'}`}>{label}</span>
               </button>
             ))}
           </div>
         </div>
 
-        {/* Tasks */}
-        <div className="mb-4">
-          <div className="flex items-center justify-between mb-3">
-            <h2 className="text-base font-semibold text-gray-800">Tarefas de hoje</h2>
+        {/* Tasks section */}
+        <div>
+          <div className="flex items-center justify-between mb-3 px-1">
+            <p className="text-[17px] font-bold text-gray-900">Tarefas de hoje</p>
             <button
               onClick={() => setShowAdd(true)}
-              className="flex items-center gap-1 text-indigo-600 text-sm font-medium"
+              className="flex items-center gap-1.5 bg-indigo-500 text-white text-sm font-semibold px-3.5 py-2 rounded-full active:scale-95 transition-transform"
             >
-              <Plus size={18} /> Adicionar
+              <Plus size={15} strokeWidth={2.5} />
+              Adicionar
             </button>
           </div>
 
           {tasks.length === 0 ? (
-            <div className="text-center py-10 text-gray-400">
+            <div className="bg-white rounded-2xl py-12 text-center">
               <p className="text-4xl mb-2">✨</p>
-              <p className="text-sm">Sem tarefas para hoje.</p>
-              <p className="text-xs mt-1">Adiciona a primeira!</p>
+              <p className="text-gray-500 font-medium text-[15px]">Sem tarefas para hoje</p>
+              <p className="text-gray-400 text-sm mt-1">Toca em Adicionar para começar</p>
             </div>
           ) : (
             <div className="space-y-2">
-              {tasks
-                .sort((a, b) => {
-                  const pOrder = { high: 0, medium: 1, low: 2 }
-                  if (a.completed !== b.completed) return a.completed ? 1 : -1
-                  return pOrder[a.priority] - pOrder[b.priority]
-                })
-                .map(task => (
-                  <TaskItem key={task.id} task={task} onToggle={toggleTask} onDelete={deleteTask} />
-                ))}
+              {sortedTasks.map(task => (
+                <TaskItem key={task.id} task={task} onToggle={toggleTask} onDelete={deleteTask} />
+              ))}
             </div>
           )}
         </div>
 
-        {/* Daily note */}
-        <div className="bg-white rounded-2xl p-4 shadow-sm mb-6">
-          <p className="text-sm font-semibold text-gray-700 mb-2">Nota do dia</p>
+        {/* Note */}
+        <div className="bg-white rounded-2xl overflow-hidden">
+          <div className="px-4 pt-4 pb-2">
+            <p className="text-[13px] font-semibold text-gray-500 uppercase tracking-wide">Nota do dia</p>
+          </div>
           <textarea
             value={note}
             onChange={e => setNote(e.target.value)}
-            placeholder="Como foi o teu dia? O que conseguiste? O que podes melhorar?"
+            placeholder="Como foi o teu dia? O que conseguiste?"
             rows={3}
-            className="w-full text-sm text-gray-700 placeholder-gray-400 resize-none border border-gray-100 rounded-xl px-3 py-2 focus:border-indigo-300 focus:outline-none transition-all"
+            className="w-full px-4 pb-3 text-[15px] text-gray-800 placeholder-gray-300 resize-none bg-transparent"
           />
           <button
             onClick={saveNote}
-            className={`mt-2 w-full py-2.5 rounded-xl text-sm font-medium transition-all ${
-              noteSaved ? 'bg-green-500 text-white' : 'bg-indigo-500 text-white hover:bg-indigo-600'
+            className={`w-full py-3.5 text-sm font-semibold transition-all border-t border-gray-100 ${
+              noteSaved ? 'text-green-600 bg-green-50' : 'text-indigo-600 active:bg-indigo-50'
             }`}
           >
             {noteSaved ? '✓ Guardado' : 'Guardar nota'}
           </button>
         </div>
+
       </div>
 
       {showAdd && (

@@ -1,10 +1,10 @@
 import { Trash2 } from 'lucide-react'
 import type { Task } from '../types'
 
-const priorityColors = {
-  low: 'bg-gray-100 text-gray-500',
-  medium: 'bg-amber-50 text-amber-600',
-  high: 'bg-red-50 text-red-500',
+const priorityDot: Record<Task['priority'], string> = {
+  high: 'bg-red-400',
+  medium: 'bg-amber-400',
+  low: 'bg-gray-300',
 }
 
 interface Props {
@@ -15,42 +15,42 @@ interface Props {
 
 export function TaskItem({ task, onToggle, onDelete }: Props) {
   return (
-    <div className={`flex items-center gap-3 p-3 rounded-xl bg-white border transition-all ${
-      task.completed ? 'opacity-60' : 'border-gray-100'
+    <div className={`flex items-center gap-3 px-4 py-3.5 bg-white rounded-2xl transition-all ${
+      task.completed ? 'opacity-50' : ''
     }`}>
       <button
         onClick={() => onToggle(task.id)}
         className={`w-6 h-6 rounded-full border-2 flex items-center justify-center flex-shrink-0 transition-all ${
           task.completed
             ? 'bg-indigo-500 border-indigo-500'
-            : 'border-gray-300 hover:border-indigo-400'
+            : 'border-gray-300 active:scale-90'
         }`}
       >
         {task.completed && (
-          <svg className="w-3 h-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+          <svg className="w-3 h-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
           </svg>
         )}
       </button>
 
       <div className="flex-1 min-w-0">
-        <p className={`text-sm font-medium leading-snug ${task.completed ? 'line-through text-gray-400' : 'text-gray-800'}`}>
+        <p className={`text-[15px] font-medium leading-snug ${
+          task.completed ? 'line-through text-gray-400' : 'text-gray-900'
+        }`}>
           {task.title}
         </p>
         {task.description && (
-          <p className="text-xs text-gray-400 mt-0.5 line-clamp-2">{task.description}</p>
+          <p className="text-xs text-gray-400 mt-0.5 line-clamp-1">{task.description}</p>
         )}
       </div>
 
       <div className="flex items-center gap-2 flex-shrink-0">
-        <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${priorityColors[task.priority]}`}>
-          {task.priority === 'high' ? 'Alta' : task.priority === 'medium' ? 'Média' : 'Baixa'}
-        </span>
+        <span className={`w-2 h-2 rounded-full ${priorityDot[task.priority]}`} />
         <button
           onClick={() => onDelete(task.id)}
-          className="text-gray-300 hover:text-red-400 transition-colors p-1"
+          className="text-gray-300 active:text-red-400 transition-colors p-1 -mr-1"
         >
-          <Trash2 size={14} />
+          <Trash2 size={15} />
         </button>
       </div>
     </div>
