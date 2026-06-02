@@ -4,6 +4,7 @@ export interface Task {
   title: string
   description?: string
   due_date?: string
+  due_time?: string // formato HH:MM, opcional
   is_recurring: boolean
   recurrence_days?: number[] // 0=Sun 1=Mon ... 6=Sat
   completed: boolean

@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { X } from 'lucide-react'
+import { X, Clock } from 'lucide-react'
 import type { Task, Project } from '../types'
 
 const DAYS = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb']
@@ -16,6 +16,8 @@ export function AddTaskModal({ onClose, onAdd, projects, defaultDate }: Props) {
   const [description, setDescription] = useState('')
   const [priority, setPriority] = useState<Task['priority']>('medium')
   const [dueDate, setDueDate] = useState(defaultDate || '')
+  const [dueTime, setDueTime] = useState('')
+  const [hasTime, setHasTime] = useState(false)
   const [isRecurring, setIsRecurring] = useState(false)
   const [recurrenceDays, setRecurrenceDays] = useState<number[]>([])
   const [projectId, setProjectId] = useState('')
@@ -30,6 +32,7 @@ export function AddTaskModal({ onClose, onAdd, projects, defaultDate }: Props) {
       description: description.trim() || undefined,
       priority,
       due_date: isRecurring ? undefined : (dueDate || undefined),
+      due_time: hasTime && dueTime ? dueTime : undefined,
       is_recurring: isRecurring,
       recurrence_days: isRecurring ? recurrenceDays : undefined,
       project_id: projectId || undefined,
@@ -75,9 +78,9 @@ export function AddTaskModal({ onClose, onAdd, projects, defaultDate }: Props) {
             <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2.5">Prioridade</p>
             <div className="flex gap-2">
               {([
-                { key: 'low', label: 'Baixa', active: 'bg-gray-500 text-white', dot: 'bg-gray-300' },
-                { key: 'medium', label: 'Média', active: 'bg-amber-400 text-white', dot: 'bg-amber-400' },
-                { key: 'high', label: 'Alta', active: 'bg-red-500 text-white', dot: 'bg-red-400' },
+                { key: 'low', label: 'Baixa', active: 'bg-gray-500 text-white' },
+                { key: 'medium', label: 'Média', active: 'bg-amber-400 text-white' },
+                { key: 'high', label: 'Alta', active: 'bg-red-500 text-white' },
               ] as const).map(({ key, label, active }) => (
                 <button key={key} onClick={() => setPriority(key)}
                   className={`flex-1 py-2.5 rounded-2xl text-sm font-semibold transition-all border ${
@@ -90,7 +93,7 @@ export function AddTaskModal({ onClose, onAdd, projects, defaultDate }: Props) {
             </div>
           </div>
 
-          {/* Recurring */}
+          {/* Recurring toggle */}
           <div className="flex items-center justify-between bg-gray-50 rounded-2xl px-4 py-3.5">
             <p className="text-[15px] font-medium text-gray-800">Repetir todos os dias</p>
             <button onClick={() => setIsRecurring(!isRecurring)}
@@ -121,6 +124,31 @@ export function AddTaskModal({ onClose, onAdd, projects, defaultDate }: Props) {
               />
             </div>
           )}
+
+          {/* Hora específica */}
+          <div>
+            <div className="flex items-center justify-between bg-gray-50 rounded-2xl px-4 py-3.5">
+              <div className="flex items-center gap-2">
+                <Clock size={16} className="text-gray-400" />
+                <p className="text-[15px] font-medium text-gray-800">Hora específica</p>
+              </div>
+              <button onClick={() => { setHasTime(!hasTime); if (hasTime) setDueTime('') }}
+                className={`w-12 h-7 rounded-full transition-colors relative ${hasTime ? 'bg-indigo-500' : 'bg-gray-300'}`}>
+                <span className={`absolute top-0.5 w-6 h-6 bg-white rounded-full shadow transition-all ${hasTime ? 'left-[22px]' : 'left-0.5'}`} />
+              </button>
+            </div>
+
+            {hasTime && (
+              <div className="mt-2">
+                <input
+                  type="time"
+                  value={dueTime}
+                  onChange={e => setDueTime(e.target.value)}
+                  className="w-full px-4 py-3.5 bg-indigo-50 border border-indigo-200 rounded-2xl text-[18px] font-semibold text-indigo-700 text-center"
+                />
+              </div>
+            )}
+          </div>
 
           {projects.length > 0 && (
             <div>

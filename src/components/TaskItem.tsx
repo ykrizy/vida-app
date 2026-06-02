@@ -1,4 +1,4 @@
-import { Trash2 } from 'lucide-react'
+import { Trash2, Clock } from 'lucide-react'
 import type { Task } from '../types'
 
 const priorityDot: Record<Task['priority'], string> = {
@@ -39,9 +39,19 @@ export function TaskItem({ task, onToggle, onDelete }: Props) {
         }`}>
           {task.title}
         </p>
-        {task.description && (
-          <p className="text-xs text-gray-400 mt-0.5 line-clamp-1">{task.description}</p>
-        )}
+        <div className="flex items-center gap-2 mt-0.5">
+          {task.due_time && (
+            <span className={`flex items-center gap-1 text-xs font-semibold ${
+              task.completed ? 'text-gray-400' : 'text-indigo-500'
+            }`}>
+              <Clock size={11} />
+              {task.due_time.slice(0, 5)}
+            </span>
+          )}
+          {task.description && (
+            <p className="text-xs text-gray-400 line-clamp-1">{task.description}</p>
+          )}
+        </div>
       </div>
 
       <div className="flex items-center gap-2 flex-shrink-0">

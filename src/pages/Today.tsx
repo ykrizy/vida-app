@@ -57,7 +57,13 @@ export function Today() {
   }
 
   const sortedTasks = [...tasks].sort((a, b) => {
+    // Completas vão para o fundo
     if (a.completed !== b.completed) return a.completed ? 1 : -1
+    // Tarefas com hora aparecem primeiro, ordenadas por hora
+    if (a.due_time && b.due_time) return a.due_time.localeCompare(b.due_time)
+    if (a.due_time) return -1
+    if (b.due_time) return 1
+    // Depois por prioridade
     const p = { high: 0, medium: 1, low: 2 }
     return p[a.priority] - p[b.priority]
   })
