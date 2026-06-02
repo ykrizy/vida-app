@@ -16,45 +16,49 @@ function AddProjectModal({ onClose, onAdd }: { onClose: () => void; onAdd: (p: O
   const [emoji, setEmoji] = useState(EMOJIS[0])
 
   return (
-    <div className="fixed inset-0 bg-black/40 z-50 flex items-end" onClick={onClose}>
-      <div className="bg-white rounded-t-2xl w-full p-5 pb-8" onClick={e => e.stopPropagation()}>
-        <div className="flex items-center justify-between mb-4">
-          <h2 className="text-lg font-semibold text-gray-800">Novo Projeto</h2>
-          <button onClick={onClose}><X size={20} className="text-gray-400" /></button>
+    <div className="fixed inset-0 z-50 flex items-end" style={{ background: 'rgba(0,0,0,0.5)' }} onClick={onClose}>
+      <div
+        className="w-full max-h-[92svh] overflow-y-auto rounded-t-3xl bg-white"
+        style={{ paddingBottom: 'calc(5.5rem + env(safe-area-inset-bottom, 0px))', maxWidth: '448px', marginLeft: 'auto', marginRight: 'auto' }}
+        onClick={e => e.stopPropagation()}
+      >
+        <div className="flex justify-center pt-3 pb-1">
+          <div className="w-10 h-1 bg-gray-200 rounded-full" />
         </div>
-        <div className="space-y-3">
+        <div className="px-5 pb-2 pt-1 flex items-center justify-between">
+          <h2 className="text-[18px] font-bold text-gray-900">Novo Projeto</h2>
+          <button onClick={onClose} className="w-9 h-9 bg-gray-100 rounded-full flex items-center justify-center flex-shrink-0">
+            <X size={16} className="text-gray-500" />
+          </button>
+        </div>
+        <div className="px-5 space-y-4 pt-2">
           <div>
-            <p className="text-xs font-medium text-gray-500 mb-2">Emoji</p>
+            <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2.5">Emoji</p>
             <div className="flex flex-wrap gap-2">
               {EMOJIS.map(e => (
                 <button key={e} onClick={() => setEmoji(e)}
-                  className={`text-2xl p-1.5 rounded-lg transition-all ${emoji === e ? 'bg-indigo-100 scale-110' : 'hover:bg-gray-100'}`}>
+                  className={`text-2xl p-2 rounded-xl transition-all ${emoji === e ? 'bg-indigo-100 scale-110' : 'bg-gray-50'}`}>
                   {e}
                 </button>
               ))}
             </div>
           </div>
           <input
-            autoFocus
-            type="text"
-            placeholder="Nome do projeto"
-            value={name}
-            onChange={e => setName(e.target.value)}
-            className="w-full px-4 py-3 bg-gray-50 rounded-xl text-sm text-gray-800 placeholder-gray-400 border border-gray-100 focus:border-indigo-300 focus:bg-white transition-all"
+            autoFocus type="text" placeholder="Nome do projeto"
+            value={name} onChange={e => setName(e.target.value)}
+            className="w-full px-4 py-3.5 bg-gray-50 rounded-2xl text-[15px] text-gray-900 placeholder-gray-400"
           />
           <textarea
-            placeholder="Descrição (opcional)"
-            value={description}
-            onChange={e => setDescription(e.target.value)}
-            rows={2}
-            className="w-full px-4 py-3 bg-gray-50 rounded-xl text-sm text-gray-800 placeholder-gray-400 border border-gray-100 focus:border-indigo-300 focus:bg-white transition-all resize-none"
+            placeholder="Descrição (opcional)" value={description}
+            onChange={e => setDescription(e.target.value)} rows={2}
+            className="w-full px-4 py-3.5 bg-gray-50 rounded-2xl text-[15px] text-gray-900 placeholder-gray-400 resize-none"
           />
           <div>
-            <p className="text-xs font-medium text-gray-500 mb-2">Cor</p>
-            <div className="flex gap-2">
+            <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2.5">Cor</p>
+            <div className="flex gap-3">
               {COLORS.map(c => (
                 <button key={c} onClick={() => setColor(c)}
-                  className={`w-8 h-8 rounded-full transition-all ${color === c ? 'scale-125 ring-2 ring-offset-2 ring-gray-400' : ''}`}
+                  className={`w-9 h-9 rounded-full transition-all ${color === c ? 'scale-125 ring-2 ring-offset-2 ring-gray-400' : ''}`}
                   style={{ backgroundColor: c }}
                 />
               ))}
@@ -63,7 +67,7 @@ function AddProjectModal({ onClose, onAdd }: { onClose: () => void; onAdd: (p: O
           <button
             onClick={() => { if (name.trim()) { onAdd({ name, description, color, emoji }); onClose() } }}
             disabled={!name.trim()}
-            className="w-full py-3.5 bg-indigo-500 text-white rounded-xl font-semibold text-sm disabled:opacity-40"
+            className="w-full py-4 bg-indigo-600 text-white rounded-2xl font-semibold text-[15px] disabled:opacity-40 active:scale-[0.98] transition-all"
           >
             Criar Projeto
           </button>

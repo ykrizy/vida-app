@@ -24,12 +24,24 @@ export function useTasks() {
 
   const addTask = useCallback(async (task: Omit<Task, 'id' | 'created_at' | 'user_id'>) => {
     if (!user) return
-    const { data } = await supabase
+    // Tenta com due_time; se falhar (coluna não existe ainda), guarda sem ela
+    const { data, error } = await supabase
       .from('tasks')
       .insert({ ...task, user_id: user.id })
       .select()
       .single()
-    if (data) setTasks(prev => [data, ...prev])
+    if (error && task.due_time) {
+      // fallback: guardar sem due_time se a coluna ainda não existe
+      const { due_time: _dt, ...taskWithoutTime } = task
+      const { data: fallbackData } = await supabase
+        .from('tasks')
+        .insert({ ...taskWithoutTime, user_id: user.id })
+        .select()
+        .single()
+      if (fallbackData) setTasks(prev => [fallbackData, ...prev])
+    } else if (data) {
+      setTasks(prev => [data, ...prev])
+    }
   }, [user])
 
   const updateTask = useCallback(async (id: string, updates: Partial<Task>) => {
