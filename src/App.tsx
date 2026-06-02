@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { BrowserRouter, Routes, Route } from 'react-router-dom'
+import { HashRouter, Routes, Route } from 'react-router-dom'
 import { AuthProvider, useAuth } from './contexts/AuthContext'
 import { BottomNav } from './components/BottomNav'
 import { Today } from './pages/Today'
@@ -33,7 +33,7 @@ function AppRoutes() {
   }
 
   return (
-    <BrowserRouter>
+    <HashRouter>
       <div className="max-w-md mx-auto min-h-svh relative bg-gray-50">
         <Routes>
           <Route path="/" element={<Today />} />
@@ -44,7 +44,7 @@ function AppRoutes() {
         </Routes>
         <BottomNav />
       </div>
-    </BrowserRouter>
+    </HashRouter>
   )
 }
 
